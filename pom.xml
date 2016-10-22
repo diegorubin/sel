@@ -9,6 +9,15 @@
 
   <name>Simple Embedded Language</name>
   <description>Simple Interpreted Embedded Language on JVM</description>
+  <url>http://github.com/diegorubin/sel</url>
+
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
