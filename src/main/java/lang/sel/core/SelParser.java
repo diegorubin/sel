@@ -439,7 +439,14 @@ public class SelParser {
    * Skip current stmt
    */
   private void jumpToNextBlock() {
-    while (!(lexer.getLookahead() == Keyword.ELSE || lexer.getLookahead() == Keyword.END)) {
+    int blockCounter = 0;
+    while (!(lexer.getLookahead() == Keyword.ELSE || lexer.getLookahead() == Keyword.END) || blockCounter != 0) {
+      if (startBlock(lexer.getLookahead())) {
+        blockCounter++;
+      }
+      if (lexer.getLookahead() == Keyword.END) {
+        blockCounter--;
+      }
       lexer.match(lexer.getLookahead());
     }
   }
@@ -448,6 +455,10 @@ public class SelParser {
     while (lexer.getLookahead() != Keyword.END_EXPRESSION) {
       lexer.match(lexer.getLookahead());
     }
+  }
+
+  private boolean startBlock(Keyword keyword) {
+    return keyword == Keyword.IF;
   }
 }
 

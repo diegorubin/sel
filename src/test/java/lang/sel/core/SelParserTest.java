@@ -165,6 +165,20 @@ public class SelParserTest {
     Assert.assertEquals(Long.valueOf(1), (Long) parser.evaluate().getResult());
   }
 
+  @Test
+  public void shouldNotExecuteIfIntoIfStmtWhenConditionsIsFalse() {
+    String block = "a = 1;\n" +
+        "IF(FALSE)\n" +
+        "  IF(TRUE)\n" +
+        "    a = 2\n" +
+        "  END\n" +
+        "END;\n" +
+        "a";
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
+    });
+    Assert.assertEquals(Long.valueOf(1), (Long) parser.evaluate().getResult());
+  }
+
   @Test(expected = SelSemanticException.class)
   public void shouldThrowErrorIfNumberOfArgumentsIsWrong() {
     FunctionOptions options = new FunctionOptions();
