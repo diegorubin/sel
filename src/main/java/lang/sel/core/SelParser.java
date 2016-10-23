@@ -386,8 +386,6 @@ public class SelParser {
       // TODO log exception
     } catch (IllegalAccessException e) {
       // TODO log exception
-    } catch (final NullPointerException e) {
-      // TODO log exception
     }
 
     throw new SelParserException(
@@ -402,8 +400,6 @@ public class SelParser {
     } catch (InstantiationException e) {
       // TODO log exception
     } catch (IllegalAccessException e) {
-      // TODO log exception
-    } catch (final NullPointerException e) {
       // TODO log exception
     }
     throw new SelParserException("no such unary operator " + operator + IN_POSITION + lexer.getPosition());
@@ -427,8 +423,6 @@ public class SelParser {
     } catch (final InvocationTargetException e) {
       // TODO log exception
       throw new SelSemanticException("failed: " + IN_POSITION + lexer.getPosition());
-    } catch (final NullPointerException e) {
-      // TODO log exception
     }
 
     throw new SelParserException("no such binary operator " + operator + IN_POSITION + lexer.getPosition());
