@@ -3,8 +3,10 @@ package lang.sel.parsers.logic;
 import lang.sel.commons.constants.logic.FalseConstant;
 import lang.sel.commons.constants.logic.TrueConstant;
 import lang.sel.commons.operators.logic.AndOperator;
+import lang.sel.commons.operators.logic.EqualsOperator;
 import lang.sel.commons.operators.logic.NotOperator;
 import lang.sel.commons.operators.logic.OrOperator;
+import lang.sel.commons.operators.math.PlusOperator;
 import lang.sel.core.SelContext;
 import lang.sel.core.SelParser;
 import lang.sel.core.wrappers.FunctionOptions;
@@ -30,6 +32,8 @@ public class LogicParserTest {
     selContext.addBinaryOperator("AND", AndOperator.class);
     selContext.addBinaryOperator("OR", OrOperator.class);
     selContext.addUnaryOperator("NOT", NotOperator.class);
+    selContext.addBinaryOperator("EQ", EqualsOperator.class);
+    selContext.addBinaryOperator("PLUS", PlusOperator.class);
     selContext.addConstant("TRUE", TrueConstant.class);
     selContext.addConstant("FALSE", FalseConstant.class);
     selContext.addFunction("ERROR", ReturnNotCommonResultFunction.class, new FunctionOptions());
@@ -91,4 +95,45 @@ public class LogicParserTest {
     parser.evaluate();
   }
 
+  @Test
+  public void shouldGetTrueIfEquals() {
+    SelParser parser = new SelParser("1.0 EQ 1", selContext, new ExecutionData() {
+    });
+    Assert.assertTrue((Boolean) parser.evaluate().getResult());
+  }
+
+  @Test
+  public void shouldGetTrueIfNotEquals() {
+    SelParser parser = new SelParser("NOT(1.0 EQ 1)", selContext, new ExecutionData() {
+    });
+    Assert.assertFalse((Boolean) parser.evaluate().getResult());
+  }
+
+  @Test
+  public void shouldGetTrueIfStringEquals() {
+    SelParser parser = new SelParser("'string' EQ 'string'", selContext, new ExecutionData() {
+    });
+    Assert.assertTrue((Boolean) parser.evaluate().getResult());
+  }
+
+  @Test
+  public void shouldGetFalseIfStringNotEquals() {
+    SelParser parser = new SelParser("'string' EQ 'gnirts'", selContext, new ExecutionData() {
+    });
+    Assert.assertFalse((Boolean) parser.evaluate().getResult());
+  }
+
+  @Test
+  public void shouldCheckIf2Plus2Equals4() {
+    SelParser parser = new SelParser("2 PLUS 2 EQ 4.0", selContext, new ExecutionData() {
+    });
+    Assert.assertTrue((Boolean) parser.evaluate().getResult());
+  }
+
+  @Test(expected = SelSemanticException.class)
+  public void shouldThrowExceptionIfCompareStringWithInt() {
+    SelParser parser = new SelParser("'string' EQ 2", selContext, new ExecutionData() {
+    });
+    parser.evaluate();
+  }
 }

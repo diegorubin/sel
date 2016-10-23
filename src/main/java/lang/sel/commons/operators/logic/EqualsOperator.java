@@ -1,4 +1,4 @@
-package lang.sel.commons.operators.math;
+package lang.sel.commons.operators.logic;
 
 import lang.sel.annotations.Operator;
 import lang.sel.commons.operators.OverloadOperator;
@@ -17,8 +17,8 @@ public class EqualsOperator extends OverloadOperator implements BinaryOperator {
   /**
    * Implements the equals operator (==)
    *
-   * @param arg1 the argument in double value
-   * @param arg2 the argument in double value
+   * @param arg1 the argument
+   * @param arg2 the argument
    *
    * @return the operation result as boolean
    */

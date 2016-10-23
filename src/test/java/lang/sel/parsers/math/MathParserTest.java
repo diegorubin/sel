@@ -27,7 +27,6 @@ public class MathParserTest {
     selContext.addBinaryOperator("GT", GreaterThanOperator.class);
     selContext.addBinaryOperator("LTE", LessThanEqualsOperator.class);
     selContext.addBinaryOperator("LT", LessThanOperator.class);
-    selContext.addBinaryOperator("EQ", EqualsOperator.class);
     selContext.addBinaryOperator("PLUS", PlusOperator.class);
     selContext.addUnaryOperator("NOT", NotOperator.class);
   }
@@ -89,31 +88,10 @@ public class MathParserTest {
   }
 
   @Test
-  public void shouldGetTrueIfEquals() {
-    SelParser parser = new SelParser("1.0 EQ 1", selContext, new ExecutionData() {
-    });
-    Assert.assertTrue((Boolean) parser.evaluate().getResult());
-  }
-
-  @Test
-  public void shouldGetTrueIfNotEquals() {
-    SelParser parser = new SelParser("NOT(1.0 EQ 1)", selContext, new ExecutionData() {
-    });
-    Assert.assertFalse((Boolean) parser.evaluate().getResult());
-  }
-
-  @Test
   public void shouldSum2Plus2() {
     SelParser parser = new SelParser("2 PLUS 2", selContext, new ExecutionData() {
     });
     Assert.assertEquals(parser.evaluate().getResult().toString(), "4");
-  }
-
-  @Test
-  public void shouldCheckIf2Plus2Equals4() {
-    SelParser parser = new SelParser("2 PLUS 2 EQ 4.0", selContext, new ExecutionData() {
-    });
-    Assert.assertTrue((Boolean) parser.evaluate().getResult());
   }
 
   @Test(expected = SelSemanticException.class)
@@ -122,5 +100,4 @@ public class MathParserTest {
     });
     parser.evaluate().getResult();
   }
-
 }

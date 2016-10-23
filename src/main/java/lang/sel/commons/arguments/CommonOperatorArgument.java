@@ -105,9 +105,11 @@ public class CommonOperatorArgument implements OperatorArgument {
   }
 
   public BooleanResult operatorEq(CommonOperatorArgument arg) {
-    checkMathArguments(arg);
     if (onlyIntegers(arg)) {
       return new BooleanResult(((Long) getContent()).equals(arg.getContent()));
+    }
+    if (onlyStrings(arg)) {
+      return new BooleanResult(((String) getContent()).equals(arg.getContent()));
     }
     return new BooleanResult(normalize(this).equals(normalize(arg)));
   }
@@ -162,6 +164,10 @@ public class CommonOperatorArgument implements OperatorArgument {
 
   private boolean onlyIntegers(CommonOperatorArgument arg) {
     return arg.getArgumentType() == Keyword.INTEGER && getArgumentType() == Keyword.INTEGER;
+  }
+
+  private boolean onlyStrings(CommonOperatorArgument arg) {
+    return arg.getArgumentType() == Keyword.STRING && getArgumentType() == Keyword.STRING;
   }
 
   private Double normalize(CommonOperatorArgument arg) {
