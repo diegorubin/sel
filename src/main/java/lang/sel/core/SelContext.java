@@ -16,7 +16,7 @@ import java.util.Map;
  *
  * @author diegorubin
  */
-public class EngineContext {
+public class SelContext {
 
   private Map<String, Class<? extends BinaryOperator>> binaryOperators;
   private Map<String, Class<? extends UnaryOperator>> unaryOperators;
@@ -28,7 +28,7 @@ public class EngineContext {
   /**
    * Create a instance of context.
    */
-  public EngineContext() {
+  public SelContext() {
     binaryOperators = new HashMap<>();
     unaryOperators = new HashMap<>();
     functions = new HashMap<>();

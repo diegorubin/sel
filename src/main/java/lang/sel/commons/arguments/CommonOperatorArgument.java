@@ -4,7 +4,7 @@ import lang.sel.commons.results.BooleanResult;
 import lang.sel.commons.results.FloatResult;
 import lang.sel.commons.results.IntegerResult;
 import lang.sel.core.Keyword;
-import lang.sel.exceptions.ExpressionSemanticException;
+import lang.sel.exceptions.SelSemanticException;
 import lang.sel.interfaces.OperationResult;
 import lang.sel.interfaces.OperatorArgument;
 
@@ -69,7 +69,7 @@ public class CommonOperatorArgument implements OperatorArgument {
    */
   public BooleanResult operatorAnd(CommonOperatorArgument arg) {
     if (getArgumentType() != Keyword.BOOLEAN || arg.getArgumentType() != Keyword.BOOLEAN) {
-      throw new ExpressionSemanticException("expecting two BOOLEAN's but get " + getArgumentType() + AND
+      throw new SelSemanticException("expecting two BOOLEAN's but get " + getArgumentType() + AND
           + arg.getArgumentType());
     }
     return new BooleanResult((Boolean) getContent() && ((Boolean) arg.getContent()));
@@ -85,7 +85,7 @@ public class CommonOperatorArgument implements OperatorArgument {
    */
   public BooleanResult operatorOr(CommonOperatorArgument arg) {
     if (getArgumentType() != Keyword.BOOLEAN || arg.getArgumentType() != Keyword.BOOLEAN) {
-      throw new ExpressionSemanticException("expecting two BOOLEAN's but get " + getArgumentType() + AND
+      throw new SelSemanticException("expecting two BOOLEAN's but get " + getArgumentType() + AND
           + arg.getArgumentType());
     }
     return new BooleanResult((Boolean) getContent() || ((Boolean) arg.getContent()));
@@ -99,7 +99,7 @@ public class CommonOperatorArgument implements OperatorArgument {
    */
   public BooleanResult operatorNot() {
     if (getArgumentType() != Keyword.BOOLEAN) {
-      throw new ExpressionSemanticException("expecting BOOLEAN but get " + getArgumentType());
+      throw new SelSemanticException("expecting BOOLEAN but get " + getArgumentType());
     }
     return new BooleanResult(!(Boolean) getContent());
   }
@@ -155,7 +155,7 @@ public class CommonOperatorArgument implements OperatorArgument {
   private void checkMathArguments(CommonOperatorArgument arg) {
     if (!((getArgumentType() == Keyword.INTEGER || getArgumentType() == Keyword.FLOAT) &&
         (arg.getArgumentType() != Keyword.INTEGER || arg.getArgumentType() != Keyword.FLOAT))) {
-      throw new ExpressionSemanticException("expecting two numbers but get " + getArgumentType() + AND
+      throw new SelSemanticException("expecting two numbers but get " + getArgumentType() + AND
           + arg.getArgumentType());
     }
   }

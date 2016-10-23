@@ -1,6 +1,6 @@
 package lang.sel.core;
 
-import lang.sel.exceptions.ExpressionParserException;
+import lang.sel.exceptions.SelParserException;
 
 import static lang.sel.core.Keyword.END_EXPRESSION_CHAR;
 
@@ -11,7 +11,7 @@ import static lang.sel.core.Keyword.END_EXPRESSION_CHAR;
  *
  * @author diegorubin
  */
-class ExpressionLexer {
+class SelLexer {
 
   private String buffer;
   private StringBuilder lexeme;
@@ -25,7 +25,7 @@ class ExpressionLexer {
    *
    * @param expression promotion expression that will be parsed by the lexer.
    */
-  ExpressionLexer(String expression) {
+  SelLexer(String expression) {
     buffer = expression + END_EXPRESSION_CHAR + END_EXPRESSION_CHAR;
   }
 
@@ -62,7 +62,7 @@ class ExpressionLexer {
     if (lookahead == expected) {
       lookahead = getToken();
     } else {
-      throw new ExpressionParserException(
+      throw new SelParserException(
           "expected \"" + expected + "\", but found \"" + lookahead + "\" in position " + position);
     }
   }
@@ -301,7 +301,7 @@ class ExpressionLexer {
     try {
       return buffer.charAt(position++);
     } catch (StringIndexOutOfBoundsException e) {
-      throw new ExpressionParserException("error on get char, lookahead \"" + lookahead + "\" in position " + position);
+      throw new SelParserException("error on get char, lookahead \"" + lookahead + "\" in position " + position);
     }
 
   }

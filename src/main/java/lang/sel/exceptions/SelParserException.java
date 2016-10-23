@@ -7,14 +7,14 @@ package lang.sel.exceptions;
  *
  * @author diegorubin
  */
-public class ExpressionParserException extends RuntimeException {
+public class SelParserException extends RuntimeException {
 
   /**
    * Set the message of exception.
    *
    * @param message the message to showed on log
    */
-  public ExpressionParserException(final String message) {
+  public SelParserException(final String message) {
     super(message);
   }
 }

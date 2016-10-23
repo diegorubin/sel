@@ -7,7 +7,7 @@ import lang.sel.core.functions.AnswerFunction;
 import lang.sel.core.functions.EqualsFunction;
 import lang.sel.core.functions.SumFunction;
 import lang.sel.core.wrappers.FunctionOptions;
-import lang.sel.exceptions.ExpressionSemanticException;
+import lang.sel.exceptions.SelSemanticException;
 import lang.sel.interfaces.ExecutionData;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,41 +19,41 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author diegorubin
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ExpressionParserTest {
+public class SelParserTest {
 
-  private EngineContext engineContext;
+  private SelContext selContext;
 
   @Before
   public void setup() {
-    engineContext = new EngineContext();
-    engineContext.addConstant("TRUE", TrueConstant.class);
-    engineContext.addConstant("FALSE", FalseConstant.class);
-    engineContext.addFunction("equals", EqualsFunction.class, new FunctionOptions());
-    engineContext.addFunction("sum", SumFunction.class, new FunctionOptions());
-    engineContext.addBinaryOperator("plus", PlusOperator.class);
+    selContext = new SelContext();
+    selContext.addConstant("TRUE", TrueConstant.class);
+    selContext.addConstant("FALSE", FalseConstant.class);
+    selContext.addFunction("equals", EqualsFunction.class, new FunctionOptions());
+    selContext.addFunction("sum", SumFunction.class, new FunctionOptions());
+    selContext.addBinaryOperator("plus", PlusOperator.class);
   }
 
   @Test
   public void shouldRecoverTwoArguments() {
-    ExpressionParser parser = new ExpressionParser("equals('1','3')", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("equals('1','3')", selContext, new ExecutionData() {
     });
     Assert.assertFalse((Boolean) parser.evaluate().getResult());
 
-    parser = new ExpressionParser("equals('1','1')", engineContext, new ExecutionData() {
+    parser = new SelParser("equals('1','1')", selContext, new ExecutionData() {
     });
     Assert.assertTrue((Boolean) parser.evaluate().getResult());
   }
 
   @Test
   public void shouldUseFloat() {
-    ExpressionParser parser = new ExpressionParser("equals(sum(1.0, 1), '2.0')", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("equals(sum(1.0, 1), '2.0')", selContext, new ExecutionData() {
     });
     Assert.assertTrue((Boolean) parser.evaluate().getResult());
   }
 
   @Test
   public void shouldSumIntegers() {
-    ExpressionParser parser = new ExpressionParser("1 plus 2 plus 3", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("1 plus 2 plus 3", selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(6), (Long) parser.evaluate().getResult());
   }
@@ -63,9 +63,9 @@ public class ExpressionParserTest {
     FunctionOptions options = new FunctionOptions();
     options.setNumberOfArguments(0);
 
-    engineContext.addFunction("answer", AnswerFunction.class, options);
+    selContext.addFunction("answer", AnswerFunction.class, options);
 
-    ExpressionParser parser = new ExpressionParser("answer()", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("answer()", selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(42), (Long) parser.evaluate().getResult());
   }
@@ -74,7 +74,7 @@ public class ExpressionParserTest {
   public void shouldExecuteTwoExpressionAndReturnSecondValue() {
     String block = "1 plus 1;\n" +
         "1 plus 2";
-    ExpressionParser parser = new ExpressionParser(block, engineContext, new ExecutionData() {
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(3), (Long) parser.evaluate().getResult());
   }
@@ -84,7 +84,7 @@ public class ExpressionParserTest {
     String block = "var = 1 plus 1;\n" +
         "1 plus 2;\n" +
         "var";
-    ExpressionParser parser = new ExpressionParser(block, engineContext, new ExecutionData() {
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(2), (Long) parser.evaluate().getResult());
   }
@@ -92,7 +92,7 @@ public class ExpressionParserTest {
   @Test
   public void shouldExecuteTwoExpressionSeparatedBySemicolonAndReturnSecondValue() {
     String block = "1 plus 1;1 plus 2";
-    ExpressionParser parser = new ExpressionParser(block, engineContext, new ExecutionData() {
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(3), (Long) parser.evaluate().getResult());
   }
@@ -100,7 +100,7 @@ public class ExpressionParserTest {
   @Test
   public void shouldReturnNullIfConditionsIsFalse() {
     String block = "IF(FALSE) 1 plus 1 END";
-    ExpressionParser parser = new ExpressionParser(block, engineContext, new ExecutionData() {
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertNull(parser.evaluate());
   }
@@ -108,7 +108,7 @@ public class ExpressionParserTest {
   @Test
   public void shouldReturnExpressionAfterIfWhenTrue() {
     String block = "IF(TRUE) 1 ELSE 2 END";
-    ExpressionParser parser = new ExpressionParser(block, engineContext, new ExecutionData() {
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(1), (Long) parser.evaluate().getResult());
   }
@@ -116,7 +116,7 @@ public class ExpressionParserTest {
   @Test
   public void shouldReturnExpressionsAfterIfWhenTrue() {
     String block = "IF(TRUE) 1; 3; 70 plus 10 ELSE 2 END";
-    ExpressionParser parser = new ExpressionParser(block, engineContext, new ExecutionData() {
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(80), (Long) parser.evaluate().getResult());
   }
@@ -124,7 +124,7 @@ public class ExpressionParserTest {
   @Test
   public void shouldReturnExpressionAfterElseWhenFalse() {
     String block = "IF(FALSE) 1 ELSE 2; 4 END";
-    ExpressionParser parser = new ExpressionParser(block, engineContext, new ExecutionData() {
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(4), (Long) parser.evaluate().getResult());
   }
@@ -132,7 +132,7 @@ public class ExpressionParserTest {
   @Test
   public void shouldReturnExpressionAfterIfElse() {
     String block = "IF(FALSE) 1 ELSE 2; 4 END; 5";
-    ExpressionParser parser = new ExpressionParser(block, engineContext, new ExecutionData() {
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(5), (Long) parser.evaluate().getResult());
   }
@@ -146,7 +146,7 @@ public class ExpressionParserTest {
         "  4\n" +
         "END;\n" +
         "5";
-    ExpressionParser parser = new ExpressionParser(block, engineContext, new ExecutionData() {
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(5), (Long) parser.evaluate().getResult());
   }
@@ -160,18 +160,18 @@ public class ExpressionParserTest {
         "  4\n" +
         "END;\n" +
         "5";
-    ExpressionParser parser = new ExpressionParser(block, engineContext, new ExecutionData() {
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(1), (Long) parser.evaluate().getResult());
   }
 
-  @Test(expected = ExpressionSemanticException.class)
+  @Test(expected = SelSemanticException.class)
   public void shouldThrowErrorIfNumberOfArgumentsIsWrong() {
     FunctionOptions options = new FunctionOptions();
     options.setNumberOfArguments(2);
 
-    engineContext.addFunction("sum", SumFunction.class, options);
-    ExpressionParser parser = new ExpressionParser("sum(1, 2, 3)", engineContext, new ExecutionData() {
+    selContext.addFunction("sum", SumFunction.class, options);
+    SelParser parser = new SelParser("sum(1, 2, 3)", selContext, new ExecutionData() {
     });
 
     parser.evaluate();

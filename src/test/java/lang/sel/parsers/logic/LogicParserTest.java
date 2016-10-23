@@ -5,10 +5,10 @@ import lang.sel.commons.constants.logic.TrueConstant;
 import lang.sel.commons.operators.logic.AndOperator;
 import lang.sel.commons.operators.logic.NotOperator;
 import lang.sel.commons.operators.logic.OrOperator;
-import lang.sel.core.EngineContext;
-import lang.sel.core.ExpressionParser;
+import lang.sel.core.SelContext;
+import lang.sel.core.SelParser;
 import lang.sel.core.wrappers.FunctionOptions;
-import lang.sel.exceptions.ExpressionSemanticException;
+import lang.sel.exceptions.SelSemanticException;
 import lang.sel.interfaces.ExecutionData;
 import lang.sel.parsers.logic.functions.ReturnNotCommonResultFunction;
 import org.junit.Assert;
@@ -22,71 +22,71 @@ import org.mockito.runners.MockitoJUnitRunner;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class LogicParserTest {
-  private EngineContext engineContext;
+  private SelContext selContext;
 
   @Before
   public void setup() {
-    engineContext = new EngineContext();
-    engineContext.addBinaryOperator("AND", AndOperator.class);
-    engineContext.addBinaryOperator("OR", OrOperator.class);
-    engineContext.addUnaryOperator("NOT", NotOperator.class);
-    engineContext.addConstant("TRUE", TrueConstant.class);
-    engineContext.addConstant("FALSE", FalseConstant.class);
-    engineContext.addFunction("ERROR", ReturnNotCommonResultFunction.class, new FunctionOptions());
+    selContext = new SelContext();
+    selContext.addBinaryOperator("AND", AndOperator.class);
+    selContext.addBinaryOperator("OR", OrOperator.class);
+    selContext.addUnaryOperator("NOT", NotOperator.class);
+    selContext.addConstant("TRUE", TrueConstant.class);
+    selContext.addConstant("FALSE", FalseConstant.class);
+    selContext.addFunction("ERROR", ReturnNotCommonResultFunction.class, new FunctionOptions());
   }
 
   @Test
   public void shouldReturnTrue() {
-    ExpressionParser parser = new ExpressionParser("TRUE AND TRUE", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("TRUE AND TRUE", selContext, new ExecutionData() {
     });
     Assert.assertTrue((Boolean) parser.evaluate().getResult());
   }
 
   @Test
   public void shouldReturnFalse() {
-    ExpressionParser parser = new ExpressionParser("NOT TRUE", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("NOT TRUE", selContext, new ExecutionData() {
     });
     Assert.assertFalse((Boolean) parser.evaluate().getResult());
   }
 
   @Test
   public void shouldReturnTrueWithOrOperation() {
-    ExpressionParser parser = new ExpressionParser("TRUE OR FALSE", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("TRUE OR FALSE", selContext, new ExecutionData() {
     });
     Assert.assertTrue((Boolean) parser.evaluate().getResult());
   }
 
-  @Test(expected = ExpressionSemanticException.class)
+  @Test(expected = SelSemanticException.class)
   public void shouldThrowSemanticExceptionIfWrongNotArgument() {
-    ExpressionParser parser = new ExpressionParser("NOT 1", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("NOT 1", selContext, new ExecutionData() {
     });
     parser.evaluate();
   }
 
-  @Test(expected = ExpressionSemanticException.class)
+  @Test(expected = SelSemanticException.class)
   public void shouldThrowSemanticExceptionIfWrongDataTypeIAnd() {
-    ExpressionParser parser = new ExpressionParser("TRUE AND 'test'", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("TRUE AND 'test'", selContext, new ExecutionData() {
     });
     parser.evaluate().getResult();
   }
 
-  @Test(expected = ExpressionSemanticException.class)
+  @Test(expected = SelSemanticException.class)
   public void shouldThrowSemanticExceptionIfWrongDataTypeIOr() {
-    ExpressionParser parser = new ExpressionParser("1 OR FALSE", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("1 OR FALSE", selContext, new ExecutionData() {
     });
     parser.evaluate().getResult();
   }
 
-  @Test(expected = ExpressionSemanticException.class)
+  @Test(expected = SelSemanticException.class)
   public void shouldNotRespondToInAndOperator() {
-    ExpressionParser parser = new ExpressionParser("TRUE AND ERROR()", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("TRUE AND ERROR()", selContext, new ExecutionData() {
     });
     parser.evaluate();
   }
 
-  @Test(expected = ExpressionSemanticException.class)
+  @Test(expected = SelSemanticException.class)
   public void shouldNotRespondToForNotOperator() {
-    ExpressionParser parser = new ExpressionParser("NOT ERROR()", engineContext, new ExecutionData() {
+    SelParser parser = new SelParser("NOT ERROR()", selContext, new ExecutionData() {
     });
     parser.evaluate();
   }

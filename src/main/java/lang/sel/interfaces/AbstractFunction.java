@@ -1,8 +1,8 @@
 package lang.sel.interfaces;
 
-import lang.sel.core.EngineContext;
+import lang.sel.core.SelContext;
 import lang.sel.core.wrappers.FunctionOptions;
-import lang.sel.exceptions.ExpressionSemanticException;
+import lang.sel.exceptions.SelSemanticException;
 
 /**
  * Function interface
@@ -13,7 +13,7 @@ import lang.sel.exceptions.ExpressionSemanticException;
  */
 public abstract class AbstractFunction {
 
-  protected EngineContext engineContext;
+  protected SelContext selContext;
   protected ExecutionData executionData;
   protected String functionName;
 
@@ -31,12 +31,12 @@ public abstract class AbstractFunction {
    * Set data to execute a function
    *
    * @param functionName  the function name used on expression
-   * @param engineContext the engine context singleton
+   * @param selContext the engine context singleton
    * @param executionData the data for current execution
    */
-  public void setContext(final String functionName, final EngineContext engineContext, final ExecutionData executionData) {
+  public void setContext(final String functionName, final SelContext selContext, final ExecutionData executionData) {
     this.functionName = functionName;
-    this.engineContext = engineContext;
+    this.selContext = selContext;
     this.executionData = executionData;
   }
 
@@ -50,9 +50,9 @@ public abstract class AbstractFunction {
   public abstract OperationResult execute(OperatorArgument... args);
 
   public void validateFunctionOptions(final OperatorArgument... args) {
-    final FunctionOptions options = engineContext.getFunctionOptions(functionName);
+    final FunctionOptions options = selContext.getFunctionOptions(functionName);
     if (options.getNumberOfArguments().isPresent() && (args.length != options.getNumberOfArguments().get())) {
-      throw new ExpressionSemanticException(functionName + " expect " + options.getNumberOfArguments().get() +
+      throw new SelSemanticException(functionName + " expect " + options.getNumberOfArguments().get() +
           " arguments but received " + args.length + " arguments!");
     }
   }

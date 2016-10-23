@@ -9,14 +9,14 @@ package lang.sel.exceptions;
  *
  * @author diegorubin
  */
-public class ExpressionSemanticException extends RuntimeException {
+public class SelSemanticException extends RuntimeException {
 
   /**
    * Set the message of exception.
    *
    * @param message the message to showed on log
    */
-  public ExpressionSemanticException(final String message) {
+  public SelSemanticException(final String message) {
     super(message);
   }
 }

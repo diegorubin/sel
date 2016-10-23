@@ -1,6 +1,6 @@
 package lang.sel.core;
 
-import lang.sel.exceptions.ExpressionParserException;
+import lang.sel.exceptions.SelParserException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,13 +10,13 @@ import org.mockito.runners.MockitoJUnitRunner;
  * @author diegorubin
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ExpressionLexerTest {
+public class SelLexerTest {
 
   @Test
   public void shouldGetId() {
     final String expr = "lista";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     Assert.assertEquals(lexer.getToken(), Keyword.ID);
     Assert.assertEquals(lexer.getLexeme(), expr);
   }
@@ -25,7 +25,7 @@ public class ExpressionLexerTest {
   public void shouldGetAnd() {
     final String expr = "AND";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     Assert.assertEquals(lexer.getToken(), Keyword.ID);
     Assert.assertEquals(lexer.getLexeme(), expr);
   }
@@ -34,7 +34,7 @@ public class ExpressionLexerTest {
   public void shouldGetNot() {
     final String expr = "NOT";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     Assert.assertEquals(lexer.getToken(), Keyword.ID);
     Assert.assertEquals(lexer.getLexeme(), expr);
   }
@@ -43,7 +43,7 @@ public class ExpressionLexerTest {
   public void shouldGetKeywordsSkippingWhitespace() {
     final String expr = "AND TESTE";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     Assert.assertEquals(lexer.getToken(), Keyword.ID);
     Assert.assertEquals(lexer.getToken(), Keyword.ID);
   }
@@ -52,7 +52,7 @@ public class ExpressionLexerTest {
   public void shouldGetStartParentheses() {
     final String expr = "(";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     Assert.assertEquals(lexer.getToken(), Keyword.SP);
   }
 
@@ -60,7 +60,7 @@ public class ExpressionLexerTest {
   public void shouldGetEndParentheses() {
     final String expr = ")";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     Assert.assertEquals(lexer.getToken(), Keyword.EP);
   }
 
@@ -68,7 +68,7 @@ public class ExpressionLexerTest {
   public void shouldGetString() {
     final String expr = "TESTE('nike')";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     Assert.assertEquals(lexer.getToken(), Keyword.ID);
     Assert.assertEquals(lexer.getToken(), Keyword.SP);
     Assert.assertEquals(lexer.getToken(), Keyword.STRING);
@@ -80,7 +80,7 @@ public class ExpressionLexerTest {
   public void shouldGetExpression() {
     final String expr = "TESTE(list) AND TESTE('nike')";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     Assert.assertEquals(lexer.getToken(), Keyword.ID);
     Assert.assertEquals(lexer.getToken(), Keyword.SP);
     Assert.assertEquals(lexer.getToken(), Keyword.ID);
@@ -98,7 +98,7 @@ public class ExpressionLexerTest {
   public void shouldGetTokensForExpressionList() {
     final String expr = "TESTE(list, 'nike')";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     Assert.assertEquals(lexer.getToken(), Keyword.ID);
     Assert.assertEquals(lexer.getToken(), Keyword.SP);
     Assert.assertEquals(lexer.getToken(), Keyword.ID);
@@ -111,7 +111,7 @@ public class ExpressionLexerTest {
   public void shouldGetNumber() {
     final String expr = "123, 1.123, .1234";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     Assert.assertEquals(lexer.getToken(), Keyword.INTEGER);
     Assert.assertEquals(lexer.getToken(), Keyword.FACTOR_SEPARATOR);
     Assert.assertEquals(lexer.getToken(), Keyword.FLOAT);
@@ -119,20 +119,20 @@ public class ExpressionLexerTest {
     Assert.assertEquals(lexer.getToken(), Keyword.FLOAT);
   }
 
-  @Test(expected = ExpressionParserException.class)
+  @Test(expected = SelParserException.class)
   public void shouldThrowExceptionForWrongExpression() {
     final String expr = "AND";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     lexer.match(null);
     lexer.match(Keyword.SP);
   }
 
-  @Test(expected = ExpressionParserException.class)
+  @Test(expected = SelParserException.class)
   public void shouldThrowExceptionForWrongString() {
     final String expr = "'wrong string";
 
-    final ExpressionLexer lexer = new ExpressionLexer(expr);
+    final SelLexer lexer = new SelLexer(expr);
     lexer.match(null);
     lexer.match(Keyword.STRING);
   }

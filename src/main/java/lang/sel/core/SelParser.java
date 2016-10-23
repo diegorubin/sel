@@ -4,8 +4,8 @@ import lang.sel.commons.results.FloatResult;
 import lang.sel.commons.results.IntegerResult;
 import lang.sel.commons.results.ReferenceResult;
 import lang.sel.commons.results.StringResult;
-import lang.sel.exceptions.ExpressionParserException;
-import lang.sel.exceptions.ExpressionSemanticException;
+import lang.sel.exceptions.SelParserException;
+import lang.sel.exceptions.SelSemanticException;
 import lang.sel.interfaces.*;
 
 import java.lang.reflect.Constructor;
@@ -63,28 +63,28 @@ import java.util.List;
  *
  * @author diegorubin
  */
-public class ExpressionParser {
+public class SelParser {
 
   private static final String IN_POSITION = " in position ";
 
-  private EngineContext engineContext;
+  private SelContext selContext;
   private ExecutionData executionData;
-  private ExpressionLexer lexer;
+  private SelLexer lexer;
   private Boolean skipToEnd = false;
 
   /**
    * Instantiates a new Expression parser.
    *
    * @param promotionExpression promotion expression to be evaluated
-   * @param engineContext       engine context singleton
+   * @param selContext       engine context singleton
    * @param executionData       execution data with specific data for one single evaluation
    */
-  public ExpressionParser(final String promotionExpression, final EngineContext engineContext,
-      final ExecutionData executionData) {
-    this.engineContext = engineContext;
+  public SelParser(final String promotionExpression, final SelContext selContext,
+                   final ExecutionData executionData) {
+    this.selContext = selContext;
     this.executionData = executionData;
 
-    lexer = new ExpressionLexer(promotionExpression);
+    lexer = new SelLexer(promotionExpression);
     lexer.match(null);
   }
 
@@ -199,7 +199,7 @@ public class ExpressionParser {
    */
   private OperationResult expression() {
     OperationResult result = term();
-    while (engineContext.isBinaryOperator(lexer.getLexeme())) {
+    while (selContext.isBinaryOperator(lexer.getLexeme())) {
       final OperatorArgument arg1 = result.toOperatorArgument();
       final String operator = op();
       final OperatorArgument term2 = term().toOperatorArgument();
@@ -219,7 +219,7 @@ public class ExpressionParser {
    */
   private OperationResult term() {
     final String operator = lexer.getLexeme();
-    if (engineContext.isUnaryOperator(lexer.getLexeme())) {
+    if (selContext.isUnaryOperator(lexer.getLexeme())) {
       lexer.match(Keyword.ID);
       return executeUnaryOperator(factor().toOperatorArgument(), operator);
     }
@@ -240,7 +240,7 @@ public class ExpressionParser {
     final OperationResult result;
     OperatorArgument[] arguments = new OperatorArgument[0];
 
-    if (engineContext.isFunction(lexeme)) {
+    if (selContext.isFunction(lexeme)) {
       lexer.match(Keyword.ID);
       lexer.match(Keyword.SP);
       if (lexer.getLookahead() != Keyword.EP) {
@@ -250,7 +250,7 @@ public class ExpressionParser {
       return executeFunction(lexeme, arguments);
     }
 
-    if (engineContext.isConstant(lexeme)) {
+    if (selContext.isConstant(lexeme)) {
       lexer.match(lexer.getLookahead());
       return getConstantValue(lexeme);
     }
@@ -303,7 +303,7 @@ public class ExpressionParser {
       return id(lexeme);
     }
 
-    throw new ExpressionParserException("expecting a valid factor in position " + lexer.getPosition());
+    throw new SelParserException("expecting a valid factor in position " + lexer.getPosition());
   }
 
   /**
@@ -358,12 +358,12 @@ public class ExpressionParser {
    */
   private OperationResult getConstantValue(final String constant) {
     try {
-      final SimpleConstant simpleConstant = engineContext.getConstant(constant).newInstance();
+      final SimpleConstant simpleConstant = selContext.getConstant(constant).newInstance();
       return (OperationResult) simpleConstant.getValue();
     } catch (final Exception e) {
       // TODO log exception
     }
-    throw new ExpressionParserException("expecting a valid constant in position " + lexer.getPosition());
+    throw new SelParserException("expecting a valid constant in position " + lexer.getPosition());
   }
 
   /**
@@ -378,8 +378,8 @@ public class ExpressionParser {
 
     final AbstractFunction abstractFunction;
     try {
-      abstractFunction = engineContext.getFunction(function).newInstance();
-      abstractFunction.setContext(function, engineContext, executionData);
+      abstractFunction = selContext.getFunction(function).newInstance();
+      abstractFunction.setContext(function, selContext, executionData);
       abstractFunction.validateFunctionOptions(args);
       return abstractFunction.execute(args);
     } catch (InstantiationException e) {
@@ -390,14 +390,14 @@ public class ExpressionParser {
       // TODO log exception
     }
 
-    throw new ExpressionParserException(
+    throw new SelParserException(
         "Error in the execution of the  " + function + " function " +
             IN_POSITION + lexer.getPosition());
   }
 
   private OperationResult executeUnaryOperator(final OperatorArgument argument, final String operator) {
     try {
-      final UnaryOperator unaryOperator = engineContext.getUnaryOperator(operator).newInstance();
+      final UnaryOperator unaryOperator = selContext.getUnaryOperator(operator).newInstance();
       return unaryOperator.execute(argument);
     } catch (InstantiationException e) {
       // TODO log exception
@@ -406,7 +406,7 @@ public class ExpressionParser {
     } catch (final NullPointerException e) {
       // TODO log exception
     }
-    throw new ExpressionParserException("no such unary operator " + operator + IN_POSITION + lexer.getPosition());
+    throw new SelParserException("no such unary operator " + operator + IN_POSITION + lexer.getPosition());
   }
 
   private OperationResult executeBinaryOperator(final OperatorArgument value1,
@@ -415,7 +415,7 @@ public class ExpressionParser {
     final Constructor<?> constructor;
 
     try {
-      constructor = engineContext.getBinaryOperator(operator).getConstructor();
+      constructor = selContext.getBinaryOperator(operator).getConstructor();
       final BinaryOperator binaryOperator = (BinaryOperator) constructor.newInstance();
       return binaryOperator.execute(value1, value2);
     } catch (final NoSuchMethodException e) {
@@ -426,12 +426,12 @@ public class ExpressionParser {
       // TODO log exception
     } catch (final InvocationTargetException e) {
       // TODO log exception
-      throw new ExpressionSemanticException("failed: " + IN_POSITION + lexer.getPosition());
+      throw new SelSemanticException("failed: " + IN_POSITION + lexer.getPosition());
     } catch (final NullPointerException e) {
       // TODO log exception
     }
 
-    throw new ExpressionParserException("no such binary operator " + operator + IN_POSITION + lexer.getPosition());
+    throw new SelParserException("no such binary operator " + operator + IN_POSITION + lexer.getPosition());
   }
 
   private String op() {

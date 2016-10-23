@@ -1,6 +1,6 @@
 package lang.sel.commons.operators;
 
-import lang.sel.exceptions.ExpressionSemanticException;
+import lang.sel.exceptions.SelSemanticException;
 import lang.sel.interfaces.OperationResult;
 import lang.sel.interfaces.OperatorArgument;
 
@@ -27,7 +27,7 @@ public class OverloadOperator {
 
   protected OperationResult execute(OperatorArgument arg1, OperatorArgument arg2, String methodName) {
     if (!respondTo(arg1, methodName, arg2.getClass())) {
-      throw new ExpressionSemanticException(arg1.getClass().getName() +
+      throw new SelSemanticException(arg1.getClass().getName() +
           " should respond to " + methodName + FOR_ARGUMENT_TYPE + arg2.getClass().getName());
     }
     Method method = getTarget(arg1, methodName, arg2.getClass());
@@ -36,13 +36,13 @@ public class OverloadOperator {
     } catch (IllegalAccessException e) {
     } catch (InvocationTargetException e) {
     }
-    throw new ExpressionSemanticException(arg1.getClass().getName() +
+    throw new SelSemanticException(arg1.getClass().getName() +
         " error on execute " + methodName + FOR_ARGUMENT_TYPE + arg2.getClass().getName());
   }
 
   protected OperationResult execute(OperatorArgument argument, String methodName) {
     if (!respondTo(argument, methodName)) {
-      throw new ExpressionSemanticException(argument.getClass().getName() + " should respond to " + methodName);
+      throw new SelSemanticException(argument.getClass().getName() + " should respond to " + methodName);
     }
     Method method = getTarget(argument, methodName);
     try {
@@ -50,7 +50,7 @@ public class OverloadOperator {
     } catch (IllegalAccessException e) {
     } catch (InvocationTargetException e) {
     }
-    throw new ExpressionSemanticException(argument.getClass().getName() + " error on execute " + methodName);
+    throw new SelSemanticException(argument.getClass().getName() + " error on execute " + methodName);
   }
 
   private Method getTarget(Object object, final String methodName) {
