@@ -1,5 +1,6 @@
 package lang.sel.commons.constants.logic;
 
+import lang.sel.annotations.Constant;
 import lang.sel.commons.results.BooleanResult;
 import lang.sel.interfaces.SimpleConstant;
 
@@ -12,6 +13,7 @@ import lang.sel.interfaces.SimpleConstant;
  *
  * @author diegorubin
  */
+@Constant("FALSE")
 public class FalseConstant implements SimpleConstant<BooleanResult> {
   @Override
   public BooleanResult getValue() {
