@@ -8,6 +8,7 @@ import lang.sel.commons.operators.logic.NotOperator;
 import lang.sel.commons.operators.math.PlusOperator;
 import lang.sel.core.functions.AnswerFunction;
 import lang.sel.core.functions.EqualsFunction;
+import lang.sel.core.functions.MapFunction;
 import lang.sel.core.functions.SumFunction;
 import lang.sel.core.wrappers.FunctionOptions;
 import lang.sel.exceptions.SelSemanticException;
@@ -35,6 +36,7 @@ public class SelParserTest {
     selContext.addConstant("FALSE", FalseConstant.class);
     selContext.addFunction("equals", EqualsFunction.class, new FunctionOptions());
     selContext.addFunction("sum", SumFunction.class, new FunctionOptions());
+    selContext.addFunction("map", MapFunction.class, new FunctionOptions());
     selContext.addBinaryOperator("plus", PlusOperator.class);
     selContext.addBinaryOperator("IN", InOperator.class);
     selContext.addUnaryOperator("NOT", NotOperator.class);
@@ -211,6 +213,17 @@ public class SelParserTest {
     SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertFalse((Boolean) parser.evaluate().getResult());
+  }
+
+  @Test
+  public void testMapExampleFunction() {
+    String block = "map([2, 3, 4])";
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
+    });
+    List<Object> result = (List<Object>) parser.evaluate().getResult();
+    Assert.assertEquals(4L, ((CommonOperatorArgument) result.get(0)).getContent());
+    Assert.assertEquals(6L, ((CommonOperatorArgument) result.get(1)).getContent());
+    Assert.assertEquals(8L, ((CommonOperatorArgument) result.get(2)).getContent());
   }
 
   @Test(expected = SelSemanticException.class)
