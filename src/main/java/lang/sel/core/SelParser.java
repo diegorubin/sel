@@ -1,9 +1,6 @@
 package lang.sel.core;
 
-import lang.sel.commons.results.FloatResult;
-import lang.sel.commons.results.IntegerResult;
-import lang.sel.commons.results.ReferenceResult;
-import lang.sel.commons.results.StringResult;
+import lang.sel.commons.results.*;
 import lang.sel.exceptions.SelParserException;
 import lang.sel.exceptions.SelSemanticException;
 import lang.sel.interfaces.*;
@@ -11,6 +8,7 @@ import lang.sel.interfaces.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -75,16 +73,16 @@ public class SelParser {
   /**
    * Instantiates a new Expression parser.
    *
-   * @param promotionExpression promotion expression to be evaluated
+   * @param expression promotion expression to be evaluated
    * @param selContext       engine context singleton
    * @param executionData       execution data with specific data for one single evaluation
    */
-  public SelParser(final String promotionExpression, final SelContext selContext,
+  public SelParser(final String expression, final SelContext selContext,
                    final ExecutionData executionData) {
     this.selContext = selContext;
     this.executionData = executionData;
 
-    lexer = new SelLexer(promotionExpression);
+    lexer = new SelLexer(expression);
     lexer.match(null);
   }
 
@@ -292,6 +290,13 @@ public class SelParser {
       lexer.match(Keyword.SP);
       result = expression();
       lexer.match(Keyword.EP);
+      return result;
+    }
+
+    if (lookahead == Keyword.SA) {
+      lexer.match(Keyword.SA);
+      result = new ArrayResult(Arrays.asList(expressionList()));
+      lexer.match(Keyword.EA);
       return result;
     }
 

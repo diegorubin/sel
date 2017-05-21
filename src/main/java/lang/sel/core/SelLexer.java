@@ -102,7 +102,7 @@ class SelLexer {
   }
 
   /**
-   * Check if current char is special character, like '(', ')', ';', '\n' or ','
+   * Check if current char is special character, like '(', ')', '[', ']', ';', '\n' or ','
    *
    * @return the token
    */
@@ -111,8 +111,16 @@ class SelLexer {
       return Keyword.SP;
     }
 
+    if (isStartArray()) {
+      return Keyword.SA;
+    }
+
     if (isEndParentheses()) {
       return Keyword.EP;
+    }
+
+    if (isEndArray()) {
+      return Keyword.EA;
     }
 
     if (isFactorSeparator()) {
@@ -280,6 +288,22 @@ class SelLexer {
 
   private boolean isEndParentheses() {
     if ((getChar()) == ')') {
+      return true;
+    }
+    ungetChar();
+    return false;
+  }
+
+  private boolean isStartArray() {
+    if (getChar() == '[') {
+      return true;
+    }
+    ungetChar();
+    return false;
+  }
+
+  private boolean isEndArray() {
+    if (getChar() == ']') {
       return true;
     }
     ungetChar();

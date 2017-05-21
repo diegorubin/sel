@@ -8,6 +8,8 @@ import lang.sel.exceptions.SelSemanticException;
 import lang.sel.interfaces.OperationResult;
 import lang.sel.interfaces.OperatorArgument;
 
+import java.util.List;
+
 /**
  * Common Operator Argument
  *
@@ -152,6 +154,14 @@ public class CommonOperatorArgument implements OperatorArgument {
       return new IntegerResult(((Long) getContent()) + ((Long) arg.getContent()));
     }
     return new FloatResult(normalize(this) + normalize(arg));
+  }
+
+  public OperationResult operatorIn(CommonOperatorArgument arg) {
+    if (arg.getArgumentType() != Keyword.ARRAY) {
+      throw new SelSemanticException("IN operator require an array when used with CommonOperatorArgument");
+    }
+    return new BooleanResult(((List) arg
+            .getContent()).stream().filter(o -> ((CommonOperatorArgument) o).getContent().equals(content)).count() > 0);
   }
 
   private void checkMathArguments(CommonOperatorArgument arg) {

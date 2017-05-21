@@ -1,7 +1,10 @@
 package lang.sel.core;
 
+import lang.sel.commons.arguments.CommonOperatorArgument;
 import lang.sel.commons.constants.logic.FalseConstant;
 import lang.sel.commons.constants.logic.TrueConstant;
+import lang.sel.commons.operators.logic.InOperator;
+import lang.sel.commons.operators.logic.NotOperator;
 import lang.sel.commons.operators.math.PlusOperator;
 import lang.sel.core.functions.AnswerFunction;
 import lang.sel.core.functions.EqualsFunction;
@@ -14,6 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+
+import java.util.List;
 
 /**
  * @author diegorubin
@@ -31,6 +36,8 @@ public class SelParserTest {
     selContext.addFunction("equals", EqualsFunction.class, new FunctionOptions());
     selContext.addFunction("sum", SumFunction.class, new FunctionOptions());
     selContext.addBinaryOperator("plus", PlusOperator.class);
+    selContext.addBinaryOperator("IN", InOperator.class);
+    selContext.addUnaryOperator("NOT", NotOperator.class);
   }
 
   @Test
@@ -177,6 +184,33 @@ public class SelParserTest {
     SelParser parser = new SelParser(block, selContext, new ExecutionData() {
     });
     Assert.assertEquals(Long.valueOf(1), (Long) parser.evaluate().getResult());
+  }
+
+  @Test
+  public void shouldCreateAnArray() {
+    String block = "[1, 'teste', 2.2]";
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
+    });
+    List<Object> result = (List<Object>) parser.evaluate().getResult();
+    Assert.assertEquals(1L, ((CommonOperatorArgument) result.get(0)).getContent());
+    Assert.assertEquals("teste", ((CommonOperatorArgument) result.get(1)).getContent());
+    Assert.assertEquals(2.2, ((CommonOperatorArgument) result.get(2)).getContent());
+  }
+
+  @Test
+  public void testItemInArray() {
+    String block = "'teste' IN [1, 'teste', 2.2]";
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
+    });
+    Assert.assertTrue((Boolean) parser.evaluate().getResult());
+  }
+
+  @Test
+  public void testItemNotInArray() {
+    String block = "NOT ('teste' IN [1, 'teste', 2.2])";
+    SelParser parser = new SelParser(block, selContext, new ExecutionData() {
+    });
+    Assert.assertFalse((Boolean) parser.evaluate().getResult());
   }
 
   @Test(expected = SelSemanticException.class)

@@ -18,6 +18,11 @@ public enum Keyword {
   /** End parentheses*/
   EP,
 
+  /** Start array*/
+  SA,
+  /** End array*/
+  EA,
+
   IF,
   ELSE,
   END,
@@ -30,7 +35,8 @@ public enum Keyword {
   BOOLEAN,
   INTEGER,
   FLOAT,
-  STRING;
+  STRING,
+  ARRAY;
 
   public static final char FACTOR_SEPARATOR_CHAR = ',';
   public static final char END_EXPRESSION_CHAR = '\0';
