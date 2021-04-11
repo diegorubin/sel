@@ -1,13 +1,10 @@
 package lang.sel.core.functions;
 
 import lang.sel.annotations.Function;
-import lang.sel.commons.arguments.CommonOperatorArgument;
 import lang.sel.commons.results.ArrayResult;
 import lang.sel.commons.results.IntegerResult;
-import lang.sel.core.Keyword;
+import lang.sel.commons.results.TypedResult;
 import lang.sel.interfaces.AbstractFunction;
-import lang.sel.interfaces.OperationResult;
-import lang.sel.interfaces.OperatorArgument;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,16 +17,15 @@ import java.util.stream.Collectors;
 @Function("map")
 public class MapFunction extends AbstractFunction {
     @Override
-    public OperationResult execute(OperatorArgument... args) {
-        CommonOperatorArgument array = (CommonOperatorArgument) args[0];
-        List<Object> resultArray = ((List<Object>) array.getContent())
-                .stream()
-                .map(o -> {
-                    CommonOperatorArgument argument = new CommonOperatorArgument(Keyword.INTEGER);
-                    argument.setContent(((Long) ((CommonOperatorArgument) o).getContent()) * 2);
-                    return argument;
-                })
-                .collect(Collectors.toList());
+    public TypedResult execute(TypedResult... args) {
+        ArrayResult array = (ArrayResult) args[0];
+        List<Object> resultArray = ((List<Object>) array.getResult())
+                                   .stream()
+        .map(o -> {
+            Long result = Long.valueOf(((Long)((TypedResult) o).getResult()) * 2);
+            return new IntegerResult(result);
+        })
+        .collect(Collectors.toList());
 
         return new ArrayResult(resultArray);
     }

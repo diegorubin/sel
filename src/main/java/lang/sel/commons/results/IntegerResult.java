@@ -9,12 +9,12 @@ import lang.sel.core.Keyword;
  */
 public class IntegerResult extends TypedResult<Long> {
 
-  /**
-   * Create a operation result with integer as content
-   *
-   * @param value the integer result
-   */
-  public IntegerResult(Long value) {
-    super(value, Keyword.INTEGER);
-  }
+    /**
+     * Create a operation result with integer as content
+     *
+     * @param value the integer result
+     */
+    public IntegerResult(Long value) {
+        super(value);
+    }
 }

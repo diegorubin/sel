@@ -1,7 +1,5 @@
 package lang.sel.commons.results;
 
-import lang.sel.core.Keyword;
-
 import java.util.List;
 
 /**
@@ -11,12 +9,12 @@ import java.util.List;
  */
 public class ArrayResult extends TypedResult<List<Object>> {
 
-  /**
-   * When a typed result is created it is necessary enter the type
-   *
-   * @param value the content
-   */
-  public ArrayResult(List<Object> value) {
-      super(value, Keyword.ARRAY);
-  }
+    /**
+     * When a typed result is created it is necessary enter the type
+     *
+     * @param value the content
+     */
+    public ArrayResult(List<Object> value) {
+        super(value);
+    }
 }

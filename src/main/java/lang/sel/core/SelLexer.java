@@ -13,326 +13,340 @@ import static lang.sel.core.Keyword.END_EXPRESSION_CHAR;
  */
 class SelLexer {
 
-  private String buffer;
-  private StringBuilder lexeme;
+    private String buffer;
+    private StringBuilder lexeme;
 
-  private Keyword lookahead;
+    private Keyword lookahead;
 
-  private int position = 0;
+    private int position = 0;
 
-  /**
-   * Instantiates a new Expression lexer.
-   *
-   * @param expression promotion expression that will be parsed by the lexer.
-   */
-  SelLexer(String expression) {
-    buffer = expression + END_EXPRESSION_CHAR + END_EXPRESSION_CHAR;
-  }
-
-  /**
-   * Returns lexeme
-   *
-   * @return the lexeme
-   */
-  String getLexeme() {
-    return lexeme.toString();
-  }
-
-  /**
-   * Get current position of buffer
-   *
-   * @return position
-   */
-  Integer getPosition() {
-    return position;
-  }
-
-  Keyword getLookahead() {
-    return lookahead;
-  }
-
-  /**
-   * Check if expected is the current token.
-   * <p>
-   * If the expected token is different of the current token a exception is throw.
-   *
-   * @param expected the expected token
-   */
-  void match(final Keyword expected) {
-    if (lookahead == expected) {
-      lookahead = getToken();
-    } else {
-      throw new SelParserException(
-          "expected \"" + expected + "\", but found \"" + lookahead + "\" in position " + position);
-    }
-  }
-
-  /**
-   * Get the next token from expression
-   *
-   * @return the token
-   */
-  Keyword getToken() {
-    Keyword token;
-
-    lexeme = new StringBuilder();
-
-    skipSpaces();
-
-    if ((token = isSpecialCharacter()) != null) {
-      return token;
+    /**
+     * Instantiates a new Expression lexer.
+     *
+     * @param expression promotion expression that will be parsed by the lexer.
+     */
+    SelLexer(String expression) {
+        buffer = expression + END_EXPRESSION_CHAR + END_EXPRESSION_CHAR;
     }
 
-    if ((token = isNumber()) != null) {
-      return token;
+    /**
+     * Returns lexeme
+     *
+     * @return the lexeme
+     */
+    String getLexeme() {
+        return lexeme.toString();
     }
 
-    if (isString()) {
-      return Keyword.STRING;
+    /**
+     * Get current position of buffer
+     *
+     * @return position
+     */
+    Integer getPosition() {
+        return position;
     }
 
-    if (isID() != null) {
-      if ((token = isStmt()) != null) {
-        return token;
-      }
-      return Keyword.ID;
+    void jumpToPosition(Integer position) {
+        this.position = position;
+        getToken();
+        System.out.println("\n\n");
+        System.out.println("lookahead: " + getLookahead());
+        System.out.println("\n\n");
     }
 
-    return isEndExpression();
-  }
-
-  /**
-   * Check if current char is special character, like '(', ')', '[', ']', ';', '\n' or ','
-   *
-   * @return the token
-   */
-  private Keyword isSpecialCharacter() {
-    if (isStartParentheses()) {
-      return Keyword.SP;
+    Keyword getLookahead() {
+        return lookahead;
     }
 
-    if (isStartArray()) {
-      return Keyword.SA;
+    /**
+     * Check if expected is the current token.
+     * <p>
+     * If the expected token is different of the current token a exception is throw.
+     *
+     * @param expected the expected token
+     */
+    void match(final Keyword expected) {
+        if (lookahead == expected) {
+            lookahead = getToken();
+            return;
+        }
+        throw new SelParserException("expected \"" + expected + "\", but found \"" + lookahead + "\" in position " + position);
     }
 
-    if (isEndParentheses()) {
-      return Keyword.EP;
+    /**
+     * Get the next token from expression
+     *
+     * @return the token
+     */
+    Keyword getToken() {
+        Keyword token;
+
+        lexeme = new StringBuilder();
+
+        skipSpaces();
+
+        if ((token = isSpecialCharacter()) != null) {
+            return token;
+        }
+
+        if ((token = isNumber()) != null) {
+            return token;
+        }
+
+        if (isString()) {
+            return Keyword.STRING;
+        }
+
+        if (isID() != null) {
+            if ((token = isStmt()) != null) {
+                return token;
+            }
+            return Keyword.ID;
+        }
+
+        return isEndExpression();
     }
 
-    if (isEndArray()) {
-      return Keyword.EA;
-    }
+    /**
+     * Check if current char is special character, like '(', ')', '[', ']', ';', '\n' or ','
+     *
+     * @return the token
+     */
+    private Keyword isSpecialCharacter() {
+        if (isStartParentheses()) {
+            return Keyword.SP;
+        }
 
-    if (isFactorSeparator()) {
-      return Keyword.FACTOR_SEPARATOR;
-    }
+        if (isStartArray()) {
+            return Keyword.SA;
+        }
 
-    if (isAssigment()) {
-      return Keyword.ASSIGNMENT;
-    }
+        if (isEndParentheses()) {
+            return Keyword.EP;
+        }
 
-    if (isEndStmt(getChar())) {
-      return Keyword.END_STMT;
-    }
-    ungetChar();
+        if (isEndArray()) {
+            return Keyword.EA;
+        }
 
-    return null;
-  }
+        if (isFactorSeparator()) {
+            return Keyword.FACTOR_SEPARATOR;
+        }
 
-  /**
-   * Check if current token is a float or an integer
-   *
-   * @return the token
-   */
-  private Keyword isNumber() {
-    char head = getChar();
+        if (isAssigment()) {
+            return Keyword.ASSIGNMENT;
+        }
 
-    if (isFloat(head)) {
-      return Keyword.FLOAT;
-    }
-
-    if (Character.isDigit(head)) {
-      lexeme.append(head);
-      while (Character.isDigit(head = getChar())) {
-        lexeme.append(head);
-      }
-
-      if (isFloat(head)) {
-        return Keyword.FLOAT;
-      } else {
+        if (isEndStmt(getChar())) {
+            return Keyword.END_STMT;
+        }
         ungetChar();
-        return Keyword.INTEGER;
-      }
-    }
-    ungetChar();
-    return null;
-  }
 
-
-  /**
-   * Check if current number is a float.
-   *
-   * @param head the current char
-   *
-   * @return true if number is a float
-   */
-  private boolean isFloat(char head) {
-    if (head == '.') {
-      lexeme.append(head);
-
-      char c;
-      while (Character.isDigit(c = getChar())) {
-        lexeme.append(c);
-      }
-      ungetChar();
-      return true;
+        return null;
     }
 
-    return false;
-  }
+    /**
+     * Check if current token is a float or an integer
+     *
+     * @return the token
+     */
+    private Keyword isNumber() {
+        char head = getChar();
 
-  /**
-   * Check if current char is a end of expression representation
-   *
-   * @return the end of expression token
-   */
-  private Keyword isEndExpression() {
-    if (getChar() == END_EXPRESSION_CHAR) {
-      return Keyword.END_EXPRESSION;
-    }
-    ungetChar();
-    return null;
-  }
+        if (isFloat(head)) {
+            return Keyword.FLOAT;
+        }
 
-  /**
-   * Check if current token is a ID
-   *
-   * @return the ID token
-   */
-  private Keyword isID() {
-    char head = getChar();
-    if (Character.isLetter(head)) {
-      lexeme.append(head);
+        if (Character.isDigit(head)) {
+            lexeme.append(head);
+            while (Character.isDigit(head = getChar())) {
+                lexeme.append(head);
+            }
 
-      while (Character.isLetterOrDigit(head = getChar()) || head == '_') {
-        lexeme.append(head);
-      }
-
-      ungetChar();
-
-      return Keyword.ID;
-    }
-    ungetChar();
-    return null;
-  }
-
-  private Keyword isStmt() {
-    if (lexeme.toString().equals(Keyword.IF.toString())) {
-      return Keyword.IF;
+            if (isFloat(head)) {
+                return Keyword.FLOAT;
+            } else {
+                ungetChar();
+                return Keyword.INTEGER;
+            }
+        }
+        ungetChar();
+        return null;
     }
 
-    if (lexeme.toString().equals(Keyword.ELSE.toString())) {
-      return Keyword.ELSE;
+
+    /**
+     * Check if current number is a float.
+     *
+     * @param head the current char
+     *
+     * @return true if number is a float
+     */
+    private boolean isFloat(char head) {
+        if (head == '.') {
+            lexeme.append(head);
+
+            char c;
+            while (Character.isDigit(c = getChar())) {
+                lexeme.append(c);
+            }
+            ungetChar();
+            return true;
+        }
+
+        return false;
     }
 
-    if (lexeme.toString().equals(Keyword.RETURN.toString())) {
-      return Keyword.RETURN;
+    /**
+     * Check if current char is a end of expression representation
+     *
+     * @return the end of expression token
+     */
+    private Keyword isEndExpression() {
+        if (getChar() == END_EXPRESSION_CHAR) {
+            return Keyword.END_EXPRESSION;
+        }
+        ungetChar();
+        return null;
     }
 
-    if (lexeme.toString().equals(Keyword.END.toString())) {
-      return Keyword.END;
+    /**
+     * Check if current token is a ID
+     *
+     * @return the ID token
+     */
+    private Keyword isID() {
+        char head = getChar();
+        if (Character.isLetter(head)) {
+            lexeme.append(head);
+
+            while (Character.isLetterOrDigit(head = getChar()) || head == '_') {
+                lexeme.append(head);
+            }
+
+            ungetChar();
+
+            return Keyword.ID;
+        }
+        ungetChar();
+        return null;
     }
 
-    return null;
-  }
+    private Keyword isStmt() {
+        if (lexeme.toString().equals(Keyword.IF.toString())) {
+            return Keyword.IF;
+        }
 
-  private boolean isString() {
-    char head = getChar();
-    if (head == '\'') {
-      while ((head = getChar()) != '\'') {
-        lexeme.append(head);
-      }
-      return true;
-    }
-    ungetChar();
-    return false;
-  }
+        if (lexeme.toString().equals(Keyword.ELSE.toString())) {
+            return Keyword.ELSE;
+        }
 
-  private boolean isFactorSeparator() {
-    if (getChar() == Keyword.FACTOR_SEPARATOR_CHAR) {
-      return true;
-    }
-    ungetChar();
-    return false;
-  }
+        if (lexeme.toString().equals(Keyword.FOREACH.toString())) {
+            return Keyword.FOREACH;
+        }
 
-  private boolean isStartParentheses() {
-    if (getChar() == '(') {
-      return true;
-    }
-    ungetChar();
-    return false;
-  }
+        if (lexeme.toString().equals(Keyword.AS.toString())) {
+            return Keyword.AS;
+        }
 
-  private boolean isAssigment() {
-    if (getChar() == '=') {
-      return true;
-    }
-    ungetChar();
-    return false;
-  }
+        if (lexeme.toString().equals(Keyword.RETURN.toString())) {
+            return Keyword.RETURN;
+        }
 
-  private boolean isEndStmt(char head) {
-    return head == ';';
-  }
+        if (lexeme.toString().equals(Keyword.END.toString())) {
+            return Keyword.END;
+        }
 
-  private boolean isEndParentheses() {
-    if ((getChar()) == ')') {
-      return true;
-    }
-    ungetChar();
-    return false;
-  }
-
-  private boolean isStartArray() {
-    if (getChar() == '[') {
-      return true;
-    }
-    ungetChar();
-    return false;
-  }
-
-  private boolean isEndArray() {
-    if (getChar() == ']') {
-      return true;
-    }
-    ungetChar();
-    return false;
-  }
-
-  private void skipSpaces() {
-    while (isSpace(getChar())) {
-      // this while remove spaces
-    }
-    ungetChar();
-  }
-
-  private boolean isSpace(final char c) {
-    return c == ' ' || c == '\n' || c == '\t';
-  }
-
-  private char getChar() {
-    try {
-      return buffer.charAt(position++);
-    } catch (StringIndexOutOfBoundsException e) {
-      throw new SelParserException("error on get char, lookahead \"" + lookahead + "\" in position " + position);
+        return null;
     }
 
-  }
+    private boolean isString() {
+        char head = getChar();
+        if (head == '\'') {
+            while ((head = getChar()) != '\'') {
+                lexeme.append(head);
+            }
+            return true;
+        }
+        ungetChar();
+        return false;
+    }
 
-  private void ungetChar() {
-    position--;
-  }
+    private boolean isFactorSeparator() {
+        if (getChar() == Keyword.FACTOR_SEPARATOR_CHAR) {
+            return true;
+        }
+        ungetChar();
+        return false;
+    }
+
+    private boolean isStartParentheses() {
+        if (getChar() == '(') {
+            return true;
+        }
+        ungetChar();
+        return false;
+    }
+
+    private boolean isAssigment() {
+        if (getChar() == '=') {
+            return true;
+        }
+        ungetChar();
+        return false;
+    }
+
+    private boolean isEndStmt(char head) {
+        return head == ';';
+    }
+
+    private boolean isEndParentheses() {
+        if ((getChar()) == ')') {
+            return true;
+        }
+        ungetChar();
+        return false;
+    }
+
+    private boolean isStartArray() {
+        if (getChar() == '[') {
+            return true;
+        }
+        ungetChar();
+        return false;
+    }
+
+    private boolean isEndArray() {
+        if (getChar() == ']') {
+            return true;
+        }
+        ungetChar();
+        return false;
+    }
+
+    private void skipSpaces() {
+        while (isSpace(getChar())) {
+            // this while remove spaces
+        }
+        ungetChar();
+    }
+
+    private boolean isSpace(final char c) {
+        return c == ' ' || c == '\n' || c == '\t';
+    }
+
+    private char getChar() {
+        try {
+            return buffer.charAt(position++);
+        } catch (StringIndexOutOfBoundsException e) {
+            throw new SelParserException("error on get char, lookahead \"" + lookahead + "\" in position " + position);
+        }
+
+    }
+
+    private void ungetChar() {
+        position--;
+    }
 
 }
-

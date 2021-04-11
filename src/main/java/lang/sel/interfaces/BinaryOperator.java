@@ -1,5 +1,7 @@
 package lang.sel.interfaces;
 
+import lang.sel.commons.results.TypedResult;
+
 /**
  * Binary Operator Interface
  * <p>
@@ -11,14 +13,14 @@ package lang.sel.interfaces;
  */
 public interface BinaryOperator extends Operator {
 
-  /**
-   * Execute the binary operator logic.
-   *
-   * @param arg1 the first argument
-   * @param arg2 the second argument
-   *
-   * @return the operation result
-   */
-  OperationResult execute(OperatorArgument arg1, OperatorArgument arg2);
+    /**
+     * Execute the binary operator logic.
+     *
+     * @param arg1 the first argument
+     * @param arg2 the second argument
+     *
+     * @return the operation result
+     */
+    TypedResult execute(TypedResult arg1, TypedResult arg2);
 
 }

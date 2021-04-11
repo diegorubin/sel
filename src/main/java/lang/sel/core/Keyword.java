@@ -7,38 +7,40 @@ package lang.sel.core;
  */
 public enum Keyword {
 
-  /** ID OF AN ENTITY */
-  ID,
+    /** ID OF AN ENTITY */
+    ID,
 
-  /** CHARACTER TO FINAL EXPRESSION */
-  END_EXPRESSION,
+    /** CHARACTER TO FINAL EXPRESSION */
+    END_EXPRESSION,
 
-  /** Start parentheses*/
-  SP,
-  /** End parentheses*/
-  EP,
+    /** Start parentheses*/
+    SP,
+    /** End parentheses*/
+    EP,
 
-  /** Start array*/
-  SA,
-  /** End array*/
-  EA,
+    /** Start array*/
+    SA,
+    /** End array*/
+    EA,
 
-  IF,
-  ELSE,
-  END,
-  RETURN,
-  ASSIGNMENT,
+    IF,
+    ELSE,
+    END,
+    FOREACH,
+    AS,
+    RETURN,
+    ASSIGNMENT,
 
-  END_STMT,
-  FACTOR_SEPARATOR,
+    END_STMT,
+    FACTOR_SEPARATOR,
 
-  BOOLEAN,
-  INTEGER,
-  FLOAT,
-  STRING,
-  ARRAY;
+    BOOLEAN,
+    INTEGER,
+    FLOAT,
+    STRING,
+    ARRAY;
 
-  public static final char FACTOR_SEPARATOR_CHAR = ',';
-  public static final char END_EXPRESSION_CHAR = '\0';
+    public static final char FACTOR_SEPARATOR_CHAR = ',';
+    public static final char END_EXPRESSION_CHAR = '\0';
 
 }

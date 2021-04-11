@@ -2,8 +2,7 @@ package lang.sel.commons.operators.logic;
 
 import lang.sel.annotations.Operator;
 import lang.sel.commons.operators.OverloadOperator;
-import lang.sel.interfaces.OperationResult;
-import lang.sel.interfaces.OperatorArgument;
+import lang.sel.commons.results.TypedResult;
 import lang.sel.interfaces.UnaryOperator;
 
 /**
@@ -13,8 +12,8 @@ import lang.sel.interfaces.UnaryOperator;
  */
 @Operator("NOT")
 public class NotOperator extends OverloadOperator implements UnaryOperator {
-  @Override
-  public OperationResult execute(final OperatorArgument argument) {
-    return execute(argument, "operatorNot");
-  }
+    @Override
+    public TypedResult execute(final TypedResult argument) {
+        return execute(argument, "operatorNot");
+    }
 }
