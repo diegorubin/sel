@@ -1,5 +1,7 @@
 package lang.sel.interfaces;
 
+import lang.sel.commons.results.TypedResult;
+
 /**
  * Unary Operator Interface
  * <p>
@@ -11,12 +13,12 @@ package lang.sel.interfaces;
  */
 public interface UnaryOperator extends Operator {
 
-  /**
-   * Execute the operator logic
-   *
-   * @param argument the argument for unary operator
-   *
-   * @return the operation result
-   */
-  OperationResult execute(OperatorArgument argument);
+    /**
+     * Execute the operator logic
+     *
+     * @param argument the argument for unary operator
+     *
+     * @return the operation result
+     */
+    TypedResult execute(TypedResult argument);
 }

@@ -3,6 +3,8 @@ package lang.sel.interfaces;
 import java.util.HashMap;
 import java.util.Map;
 
+import lang.sel.commons.results.TypedResult;
+
 /**
  * Execution data
  * <p>
@@ -12,18 +14,18 @@ import java.util.Map;
  */
 public abstract class ExecutionData {
 
-  private final Map<String, OperationResult> variables = new HashMap<>();
+    private final Map<String, TypedResult> variables = new HashMap<>();
 
-  public void assign(final String var, final OperationResult content) {
-    variables.put(var, content);
-  }
+    public void assign(final String varName, final TypedResult content) {
+        variables.put(varName, content);
+    }
 
-  public boolean assigned(final String var) {
-    return variables.containsKey(var);
-  }
+    public boolean assigned(final String varName) {
+        return variables.containsKey(varName);
+    }
 
-  public OperationResult recover(final String var) {
-    return variables.get(var);
-  }
+    public TypedResult recover(final String varName) {
+        return variables.get(varName);
+    }
 
 }

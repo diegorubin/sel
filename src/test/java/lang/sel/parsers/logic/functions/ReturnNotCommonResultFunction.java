@@ -1,8 +1,9 @@
 package lang.sel.parsers.logic.functions;
 
+import java.math.BigDecimal;
+
+import lang.sel.commons.results.TypedResult;
 import lang.sel.interfaces.AbstractFunction;
-import lang.sel.interfaces.OperationResult;
-import lang.sel.interfaces.OperatorArgument;
 import lang.sel.parsers.logic.results.NotCommonResult;
 
 /**
@@ -10,8 +11,8 @@ import lang.sel.parsers.logic.results.NotCommonResult;
  * @author diegorubin
  */
 public class ReturnNotCommonResultFunction extends AbstractFunction {
-  @Override
-  public OperationResult execute(OperatorArgument... args) {
-    return new NotCommonResult();
-  }
+    @Override
+    public TypedResult execute(TypedResult... args) {
+        return new NotCommonResult(BigDecimal.ONE);
+    }
 }
