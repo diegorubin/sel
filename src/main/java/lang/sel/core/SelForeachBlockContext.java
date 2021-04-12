@@ -24,7 +24,7 @@ public class SelForeachBlockContext extends SelBlockContext {
     }
 
     public boolean isFinished() {
-        return data.getResult().isEmpty();
+        return loopPosition >= data.getResult().size();
     }
 
     public <T> TypedResult<T> getNextElement() {

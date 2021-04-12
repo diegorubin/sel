@@ -164,19 +164,22 @@ public class SelParser {
      */
     private void foreachstmt() {
         final TypedResult iterator = factor();
-        final String varName;
+        String varName;
+        Integer position;
+
 
         lexer.match(Keyword.AS);
         varName = lexer.getLexeme();
+        position = lexer.getPosition();
         lexer.match(Keyword.ID);
 
-        SelForeachBlockContext blockContext = new SelForeachBlockContext(Keyword.FOREACH, lexer.getPosition(), varName, ((ArrayResult) iterator));
+        SelForeachBlockContext blockContext = new SelForeachBlockContext(Keyword.FOREACH, position, varName, ((ArrayResult) iterator));
         putBlock(blockContext);
 
         while (true) {
+            executionData.assign(varName, blockContext.getNextElement());
             stmtlist();
             if (!blockContext.isFinished()) {
-                executionData.assign(varName, blockContext.getNextElement());
                 lexer.jumpToPosition(blockContext.getPosition());
             } else {
                 break;

@@ -49,10 +49,7 @@ class SelLexer {
 
     void jumpToPosition(Integer position) {
         this.position = position;
-        getToken();
-        System.out.println("\n\n");
-        System.out.println("lookahead: " + getLookahead());
-        System.out.println("\n\n");
+        match(Keyword.END);
     }
 
     Keyword getLookahead() {

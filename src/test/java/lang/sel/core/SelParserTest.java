@@ -108,10 +108,10 @@ public class SelParserTest {
 
     @Test
     public void shouldSumTwoReferences() {
-        String block = "a = 2;b = 3;a = (a plus b);a";
+        String block = "a = 2;b = 3;a = (a plus b);a = (a plus b);a";
         SelParser parser = new SelParser(block, selContext, new ExecutionData() {
         });
-        Assert.assertEquals(Long.valueOf(5), (Long) parser.evaluate().getResult());
+        Assert.assertEquals(Long.valueOf(8), (Long) parser.evaluate().getResult());
     }
 
     @Test
@@ -294,13 +294,13 @@ public class SelParserTest {
     @Test
     public void shouldExecuteLoopIntoForeach() {
         String block = "a = 0;\n" +
-                       "FOREACH [1, 2, 3] AS element\n" +
+                       "FOREACH [1, 2, 4] AS element\n" +
                        "  a = (a plus element)\n" +
                        "END;\n" +
                        "a";
         SelParser parser = new SelParser(block, selContext, new ExecutionData() {
         });
-        Assert.assertEquals(Long.valueOf(6), (Long) parser.evaluate().getResult());
+        Assert.assertEquals(Long.valueOf(7), (Long) parser.evaluate().getResult());
     }
 
     @Test(expected = SelSemanticException.class)
